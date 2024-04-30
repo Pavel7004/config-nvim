@@ -328,6 +328,9 @@ local plugins = {
 			{ "gb", mode = { "n", "o" }, desc = "Comment toggle blockwise" },
 			{ "gb", mode = "x", desc = "Comment toggle blockwise (visual)" },
 		},
+		opts = {
+			padding = true,
+		},
 	},
 
 	{
@@ -337,7 +340,7 @@ local plugins = {
 
 	{
 		"j-hui/fidget.nvim",
-		event = "UIEnter",
+		event = "VeryLazy",
 		opts = {
 			progress = {
 				suppress_on_insert = true,
@@ -452,7 +455,6 @@ local plugins = {
 
 			"nvim-neotest/nvim-nio",
 			"nvim-lua/plenary.nvim",
-			"antoinemadec/FixCursorHold.nvim",
 			"nvim-treesitter/nvim-treesitter",
 		},
 		config = function()
