@@ -18,10 +18,9 @@ map("n", "<leader>fr", builtin.oldfiles, { desc = "Find Recent Files" })
 map("n", "<leader>hm", builtin.man_pages, { desc = "Find man page" })
 map("n", "<leader>ht", builtin.help_tags, { desc = "Find nvim help page" })
 
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "Lsp prev diagnostic" })
-map("n", "]d", vim.diagnostic.goto_next, { desc = "Lsp next diagnostic" })
-
-map("n", "<leader>,", require("telescope").extensions.harpoon.marks, { desc = "Open harpoon buffers list" })
+map("n", "<leader>,", function()
+	require("telescope").extensions.harpoon.marks()
+end, { desc = "Open harpoon buffers list" })
 
 map("n", "<A-1>", function()
 	harpoon:list():select(1)
@@ -51,3 +50,7 @@ map("n", "<A-b>", function()
 end, { desc = "Add buffer to harpoon" })
 
 map("t", "<A-i>", "<C-\\><C-n><cmd>ToggleTerm<CR>", { desc = "Toggle floating terminal" })
+
+map("n", "-", function()
+	require("oil").toggle_float()
+end, { desc = "Open parent directory" })
