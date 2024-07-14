@@ -7,7 +7,8 @@ autocmd("FileType", {
 	end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
+autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("tests", { clear = true }),
 	pattern = { "rust", "go" },
 	callback = function(args)
 		local opts = function(desc)
@@ -29,5 +30,12 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.keymap.set("n", "<leader>to", function()
 			require("neotest").output_panel.toggle()
 		end, opts("Toggle tests output"))
+	end,
+})
+
+autocmd({ "BufWritePost" }, {
+	group = vim.api.nvim_create_augroup("lints", { clear = true }),
+	callback = function()
+		require("lint").try_lint()
 	end,
 })
