@@ -1,14 +1,20 @@
 local cmp = require("cmp")
 local lspkind = require("lspkind")
+local devicons = require("nvim-web-devicons")
 
 local formatting_style = {
 	fields = { "abbr", "kind", "menu" },
-	format = lspkind.cmp_format({
-		mode = "symbol_text",
-		maxwidth = 50,
-		ellipsis_char = "...",
-		show_labelDetails = true,
-	}),
+	format = function(entry, vim_item)
+		if vim.tbl_contains({ "path" }, entry.source.name) then
+			local icon, hl_group = devicons.get_icon(entry:get_completion_item().label)
+			if icon then
+				vim_item.kind = icon
+				vim_item.kind_hl_group = hl_group
+				return vim_item
+			end
+		end
+		return lspkind.cmp_format({ with_text = false })(entry, vim_item)
+	end,
 }
 
 local function border(hl_name)
@@ -26,20 +32,12 @@ end
 
 local options = {
 	completion = {
-		completeopt = "menu,menuone",
+		completeopt = "menu,menuone,noinsert",
 	},
 
 	window = {
-		completion = {
-			border = border("CmpBorder"),
-			side_padding = 0,
-			winhighlight = "Normal:CmpPmenu,CursorLine:CmpSel,Search:None",
-			scrollbar = false,
-		},
-		documentation = {
-			border = border("CmpDocBorder"),
-			winhighlight = "Normal:CmpDoc",
-		},
+		completion = cmp.config.window.bordered(),
+		documentation = cmp.config.window.bordered(),
 	},
 	snippet = {
 		expand = function(args)
