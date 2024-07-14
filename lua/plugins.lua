@@ -13,22 +13,22 @@ local plugins = {
 	},
 
 	{
-		"nvim-lualine/lualine.nvim",
-		lazy = false,
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-		opts = function()
-			return require("configs.lualine")
-		end,
-	},
-
-	{
 		"goolord/alpha-nvim",
 		lazy = false,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = function()
 			return require("alpha.themes.theta").config
+		end,
+	},
+
+	{
+		"nvim-lualine/lualine.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+		},
+		opts = function()
+			return require("configs.lualine")
 		end,
 	},
 
@@ -224,17 +224,6 @@ local plugins = {
 	},
 
 	{
-		"folke/trouble.nvim",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-			"nvim-telescope/telescope.nvim",
-		},
-		config = function()
-			require("trouble").setup()
-		end,
-	},
-
-	{
 		"folke/todo-comments.nvim",
 		event = "BufEnter",
 		dependencies = { "nvim-lua/plenary.nvim" },
@@ -265,11 +254,29 @@ local plugins = {
 
 	{
 		"folke/which-key.nvim",
+		dependencies = { "nvim-web-devicons" },
 		keys = { "<leader>", "<c-r>", "<c-w>", '"', "'", "`", "c", "v", "g" },
 		cmd = "WhichKey",
-		config = function(_, opts)
-			require("which-key").setup(opts)
-		end,
+		opts = {
+			preset = "modern",
+			plugins = {
+				marks = true,
+				registers = true,
+				spelling = {
+					enabled = true,
+					suggestions = 20,
+				},
+				presets = {
+					operators = true,
+					motions = true,
+					text_objects = true,
+					windows = true,
+					nav = true,
+					z = true,
+					g = true,
+				},
+			},
+		},
 	},
 
 	{
@@ -319,21 +326,6 @@ local plugins = {
 	},
 
 	{
-		"numToStr/Comment.nvim",
-		keys = {
-			{ "gcc", mode = "n", desc = "Comment toggle current line" },
-			{ "gc", mode = { "n", "o" }, desc = "Comment toggle linewise" },
-			{ "gc", mode = "x", desc = "Comment toggle linewise (visual)" },
-			{ "gbc", mode = "n", desc = "Comment toggle current block" },
-			{ "gb", mode = { "n", "o" }, desc = "Comment toggle blockwise" },
-			{ "gb", mode = "x", desc = "Comment toggle blockwise (visual)" },
-		},
-		opts = {
-			padding = true,
-		},
-	},
-
-	{
 		"pest-parser/pest.vim",
 		ft = { "pest" },
 	},
@@ -356,7 +348,7 @@ local plugins = {
 
 	{
 		"stevearc/dressing.nvim",
-		event = "UIEnter",
+		event = "VeryLazy",
 		dependencies = {
 			"nvim-telescope/telescope.nvim",
 		},
@@ -366,82 +358,23 @@ local plugins = {
 	},
 
 	{
-		"smjonas/inc-rename.nvim",
-		event = "LspAttach",
-		dependencies = {
-			"stevearc/dressing.nvim",
-		},
-		opts = {
-			input_buffer_type = "dressing",
-		},
-		config = function(_, opts)
-			require("inc_rename").setup(opts)
+		"stevearc/oil.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = function()
+			return require("configs.oil")
 		end,
 	},
 
 	{
-		"stevearc/oil.nvim",
-		keys = {
-			{
-				"-",
-				function()
-					require("oil").toggle_float()
-				end,
-				mode = "n",
-				desc = "Open parent directory",
-			},
-		},
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			default_file_explorer = true,
-			columns = {
-				"icon",
-				"permissions",
-				"size",
-				"mtime",
-			},
-			view_options = {
-				show_hidden = false,
-			},
-			float = {
-				padding = 2,
-				max_width = 0,
-				max_height = 0,
-				border = "rounded",
-				win_options = {
-					winblend = 0,
-				},
-			},
-			keymaps = {
-				["g?"] = "actions.show_help",
-				["<CR>"] = "actions.select",
-				["<C-s>"] = "actions.select_vsplit",
-				["<C-h>"] = "actions.select_split",
-				["<C-t>"] = "actions.select_tab",
-				["<esc>"] = "actions.close",
-				["<C-l>"] = "actions.refresh",
-				["-"] = "actions.parent",
-				["_"] = "actions.open_cwd",
-				["`"] = "actions.cd",
-				["~"] = "actions.tcd",
-				["gs"] = "actions.change_sort",
-				["gx"] = "actions.open_external",
-				["g."] = "actions.toggle_hidden",
-				["g\\"] = "actions.toggle_trash",
-			},
-		},
-	},
-
-	{
 		"akinsho/toggleterm.nvim",
-		keys = { { "<A-i>", "<cmd>ToggleTerm<CR>", desc = "Toggle floating terminal" } },
+		keys = { { "<A-i>", "<cmd>ToggleTerm<CR>I", desc = "Toggle floating terminal" } },
 		cmd = "ToggleTerm",
 		version = "*",
 		opts = {
 			autochdir = true,
 			direction = "float",
 			auto_scroll = true,
-			start_in_insert = true,
+			start_in_insert = false,
 		},
 	},
 
@@ -471,40 +404,34 @@ local plugins = {
 
 	{
 		"mfussenegger/nvim-lint",
-		event = "LspAttach",
+		event = "BufWritePost",
 		opts = {
 			linters_by_ft = {
-				go = { "golangcilint" },
+				go = { "golangcilint", "typos" },
+				lua = { "typos" },
+				rust = { "typos" },
 			},
 		},
 		config = function(_, opts)
 			local lint = require("lint")
 
 			lint.linters_by_ft = opts.linters_by_ft
-			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-				callback = function()
-					lint.try_lint()
-				end,
-			})
 		end,
 	},
 
 	{
-		"LunarVim/breadcrumbs.nvim",
-		event = "VeryLazy",
+		"stevearc/aerial.nvim",
+		event = "LspAttach",
 		dependencies = {
-			{
-				"SmiteshP/nvim-navic",
-				opts = {
-					lsp = {
-						auto_attach = true,
-					},
-				},
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-tree/nvim-web-devicons",
+		},
+		opts = {
+			autojump = true,
+			layout = {
+				default_direction = "prefer_left",
 			},
 		},
-		config = function()
-			require("breadcrumbs").setup()
-		end,
 	},
 }
 
