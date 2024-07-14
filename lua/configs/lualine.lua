@@ -7,7 +7,6 @@ M.options = {
 	section_separators = { left = "", right = "" },
 	disabled_filetypes = {
 		statusline = {
-			"alpha",
 			"Trouble",
 			"trouble",
 			"lazy",
@@ -28,9 +27,10 @@ M.options = {
 
 M.sections = {
 	lualine_a = { "mode" },
-	lualine_b = {},
+	lualine_b = { "filename" },
 	lualine_c = { "location" },
 	lualine_x = {
+		"searchcount",
 		"branch",
 	},
 	lualine_y = {
@@ -53,6 +53,7 @@ M.inactive_sections = {
 }
 
 M.tabline = {}
+
 M.winbar = {}
 M.inactive_winbar = {}
 
