@@ -1,6 +1,6 @@
 local map = vim.keymap.set
 
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
 	local function opts(desc)
 		return { buffer = bufnr, desc = desc }
 	end
@@ -13,13 +13,9 @@ local on_attach = function(_, bufnr)
 	map("n", "gr", builtin.lsp_references, opts("Lsp Show references"))
 
 	map("n", "<leader>cf", require("conform").format, opts("Format Current Buffer"))
-	map("n", "<leader>ct", require("trouble").toggle, opts("Toggle Diagnostic Buffer"))
-	map("n", "<leader>ck", vim.lsp.buf.hover, opts("Display Lsp doc"))
+	map("n", "<leader>co", require("aerial").toggle, opts("Open code outline"))
 
-	map("n", "<leader>cr", function()
-		return ":IncRename " .. vim.fn.expand("<cword>")
-	end, { expr = true, buffer = bufnr, desc = "Rename Variable at cursor" })
-
+	map("n", "<leader>cr", vim.lsp.buf.rename, opts("Rename Variable at cursor"))
 	map("n", "<leader>cs", vim.lsp.buf.signature_help, opts("Lsp Show signature help"))
 	map("n", "<leader>cwa", vim.lsp.buf.add_workspace_folder, opts("Lsp Add workspace folder"))
 	map("n", "<leader>cwr", vim.lsp.buf.remove_workspace_folder, opts("Lsp Remove workspace folder"))
@@ -30,31 +26,16 @@ local on_attach = function(_, bufnr)
 	map("n", "<leader>cD", vim.lsp.buf.type_definition, opts("Lsp Go to type definition"))
 
 	map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts("Lsp Code action"))
+
+	if client.supports_method("textDocument/inlayHint") or client.server_capabilities.inlayHintProvider then
+		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+	end
 end
 
-local on_init = function(_, _) end
-
 local base_capabilities = vim.lsp.protocol.make_client_capabilities()
-base_capabilities.textDocument.completion.completionItem = {
-	documentationFormat = { "markdown", "plaintext" },
-	snippetSupport = true,
-	preselectSupport = true,
-	insertReplaceSupport = true,
-	labelDetailsSupport = true,
-	deprecatedSupport = true,
-	commitCharactersSupport = true,
-	tagSupport = { valueSet = { 1 } },
-	resolveSupport = {
-		properties = {
-			"documentation",
-			"detail",
-			"additionalTextEdits",
-		},
-	},
-}
 local capabilities_cmp = require("cmp_nvim_lsp").default_capabilities()
 
-local capabilities = vim.tbl_deep_extend("keep", base_capabilities, capabilities_cmp)
+local capabilities = vim.tbl_deep_extend("force", base_capabilities, capabilities_cmp)
 
 local lspconfig = require("lspconfig")
 
@@ -68,6 +49,8 @@ local servers = {
 	"rust_analyzer",
 	"pylsp",
 	"pest_ls",
+	"marksman",
+	"solargraph",
 }
 
 for _, lsp in ipairs(servers) do
@@ -89,8 +72,6 @@ lspconfig.texlab.setup({
 					"compile",
 					"%f",
 					"--synctex",
-					"--keep-logs",
-					"--keep-intermediates",
 				},
 				onSave = true,
 				forwardSearchAfter = false,
@@ -111,7 +92,6 @@ lspconfig.texlab.setup({
 lspconfig.lua_ls.setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
-	on_init = on_init,
 
 	settings = {
 		Lua = {
@@ -122,7 +102,6 @@ lspconfig.lua_ls.setup({
 				library = {
 					[vim.fn.expand("$VIMRUNTIME/lua")] = true,
 					[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-					[vim.fn.stdpath("data") .. "/lazy/ui/nvchad_types"] = true,
 					[vim.fn.stdpath("data") .. "/lazy/lazy.nvim/lua/lazy"] = true,
 				},
 				maxPreload = 100000,
