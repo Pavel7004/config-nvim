@@ -42,7 +42,6 @@ local options = {
 		file_previewer = require("telescope.previewers").vim_buffer_cat.new,
 		grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
 		qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
-		-- Developer configurations: Not meant for general override
 		buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
 		mappings = {
 			n = { ["q"] = require("telescope.actions").close },
@@ -50,8 +49,6 @@ local options = {
 	},
 
 	extensions_list = { "projects", "harpoon" },
-
-	extensions = {},
 }
 
 return options
