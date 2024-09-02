@@ -409,7 +409,7 @@ local plugins = {
 			linters_by_ft = {
 				go = { "golangcilint", "typos" },
 				lua = { "typos" },
-				rust = { "typos" },
+				rust = { "clippy", "typos" },
 			},
 		},
 		config = function(_, opts)
