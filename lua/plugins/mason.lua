@@ -23,4 +23,8 @@ local options = {
 	max_concurrent_installers = 10,
 }
 
-return options
+return {
+	"williamboman/mason.nvim",
+	cmd = { "Mason", "MasonInstall", "MasonUpdate" },
+	opts = options,
+}

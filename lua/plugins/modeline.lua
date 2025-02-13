@@ -1,6 +1,6 @@
-local M = {}
+local options = {}
 
-M.options = {
+options.options = {
 	icons_enabled = true,
 	theme = "nord",
 	component_separators = { left = "", right = "" },
@@ -25,7 +25,7 @@ M.options = {
 	},
 }
 
-M.sections = {
+options.sections = {
 	lualine_a = { "mode" },
 	lualine_b = { "filename" },
 	lualine_c = { "location" },
@@ -43,7 +43,7 @@ M.sections = {
 	},
 }
 
-M.inactive_sections = {
+options.inactive_sections = {
 	lualine_a = {},
 	lualine_b = {},
 	lualine_c = { "filename" },
@@ -52,16 +52,23 @@ M.inactive_sections = {
 	lualine_z = {},
 }
 
-M.tabline = {}
+options.tabline = {}
 
-M.winbar = {}
-M.inactive_winbar = {}
+options.winbar = {}
+options.inactive_winbar = {}
 
-M.extensions = {
+options.extensions = {
 	"quickfix",
 	"oil",
 	"nvim-dap-ui",
 	"man",
 }
 
-return M
+return {
+	"nvim-lualine/lualine.nvim",
+	event = "VeryLazy",
+	dependencies = {
+		"nvim-tree/nvim-web-devicons",
+	},
+	opts = options,
+}
